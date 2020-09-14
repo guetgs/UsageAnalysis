@@ -13,4 +13,5 @@
   - [ ] Projected monthly costs
 
 ## Presentation of Results
--
+- [ ] Plot results
+- [ ] Create interactive plots
