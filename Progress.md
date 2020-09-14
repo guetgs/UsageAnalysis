@@ -1,8 +1,8 @@
 # Milestones
 ## Database
-- [ ] Define structure and requirements
-- [ ] Set up database
-- [ ] Enter data
+- [x] Define structure and requirements
+- [x] Set up database
+- [x] Enter data
 
 ## Data Analysis
 - [ ] Get data from database into pandas Dataframe
