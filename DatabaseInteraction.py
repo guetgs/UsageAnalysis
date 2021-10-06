@@ -10,18 +10,18 @@ SELECT, INSERT ON database_name.*
 
 class Database:
     default_name = 'test'
-    default_tables = ['zahler', 'readings']
-    default_columns = ['(zahler_id int NOT NULL AUTO_INCREMENT KEY,'
+    default_tables = ('zahler', 'readings')
+    default_columns = ('(zahler_id int NOT NULL AUTO_INCREMENT KEY,'
                         'zahler_nummer int,'
                         'zahler_name text)',
                        '(reading_id int NOT NULL AUTO_INCREMENT KEY,'
                         'zahler_id int,'
                         'date date,'
-                        'entry double)']
+                        'entry double)')
 
     def __init__(self, name=default_name, 
-                 tables=default_tables, 
-                 column_statements=default_columns):
+                 tables=list(default_tables), 
+                 column_statements=list(default_columns)):
         '''
         INPUT: text, list, list
         OUTPUT: none
