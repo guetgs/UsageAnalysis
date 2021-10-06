@@ -2,6 +2,11 @@ import mariadb
 import sys
 import pandas as pd
 
+'''
+Required Priviledges for user python:
+CREATE ON *.*
+SELECT, INSERT ON database_name.*
+'''
 
 class Database:
     default_name = 'test'
@@ -90,33 +95,33 @@ class Database:
         conn.close()
 
 
-def DatabaseToDataFrame(cols, table_statement, database):
-    '''
-    INPUT: list, text, text
-    OUTPUT: pandas DataFrame
+    def DatabaseToDataFrame(self, cols, table_statement):
+        '''
+        INPUT: list, text
+        OUTPUT: pandas DataFrame
 
-    Connects to a MariaDB database on localhost using the user "python" and
-    pulls data specified by the input columns from the database table(s) 
-    defined in database and table_statement. 
-    Returns the data as a pandas DataFrame.
-    '''
-    try:
-        conn = mariadb.connect(
-            user="python",
-            host="localhost")
-    except mariadb.Error as e:
-        print(f"Error connecting to MariaDB Platform: {e}")
-        sys.exit(1)
+        Connects to a MariaDB database on localhost using the user "python" and
+        pulls data specified by the input columns from the database table(s) 
+        defined table_statement. 
+        Returns the data as a pandas DataFrame.
+        '''
+        try:
+            conn = mariadb.connect(
+                user="python",
+                host="localhost")
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
 
-    cur = conn.cursor()
-    cur.execute("USE " + database)
+        cur = conn.cursor()
+        cur.execute("USE " + self.name)
 
-    SQLstatement = "SELECT " + ", ".join(cols) + " FROM " + table_statement
-    cur.execute(SQLstatement)
-    df = pd.DataFrame([value for value in cur], columns=cols)
+        SQLstatement = "SELECT " + ", ".join(cols) + " FROM " + table_statement
+        cur.execute(SQLstatement)
+        df = pd.DataFrame([value for value in cur], columns=cols)
 
-    conn.close()
+        conn.close()
 
-    return df
+        return df
 
 
