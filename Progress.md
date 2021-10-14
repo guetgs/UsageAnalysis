@@ -9,7 +9,7 @@
 - [ ] Filter and analyse data
   - [x] Consumption over time
   - [x] Consumption per time interval over time
-  - [ ] Average consumption per day
+  - [x] Average consumption per day
   - [ ] Projected monthly costs
 
 ## Presentation of Results

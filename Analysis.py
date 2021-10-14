@@ -18,3 +18,7 @@ def getIntervalData(meter_readings, interval):
     starts = resampler.first()
     ends = starts[1:].values
     return starts[:-1]*-1 + ends
+
+def getAverageConsumption(meter_readings, interval):
+    interval_data = getIntervalData(meter_readings, interval)
+    return interval_data.mean()
