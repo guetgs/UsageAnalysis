@@ -6,11 +6,11 @@
 
 ## Data Analysis
 - [x] Get data from database into pandas Dataframe
-- [ ] Filter and analyse data
+- [x] Filter and analyse data
   - [x] Consumption over time
   - [x] Consumption per time interval over time
   - [x] Average consumption per day
-  - [ ] Projected monthly costs
+  - [x] Projected monthly costs
 
 ## Presentation of Results
 - [ ] Plot results
