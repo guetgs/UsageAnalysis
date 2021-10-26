@@ -1,6 +1,8 @@
 from typing import Dict
 
+import numpy as np
 import pandas as pd
+
 
 def getIndividualFrames(readings: pd.DataFrame,  
                         col_name: str = 'name') -> Dict:
@@ -20,7 +22,7 @@ def getIntervalData(meter_readings: pd.DataFrame, interval: str):
     resampler = df.resample(interval, label='left')
     starts = resampler.first()
     ends = starts[1:].values
-    return starts[:-1] * -1 + ends
+    return -starts[:-1] + ends
 
 
 def getAverageConsumption(meter_readings: pd.DataFrame, interval: str):
@@ -33,7 +35,11 @@ def getMonthlyCost(utility: str, readings: pd.DataFrame, prices: Dict):
     meter_readings = getIndividualFrames(readings)[utility]
     if utility == 'Gas':
         meter_readings = meter_readings * gas_conversion
-    yearly = getAverageConsumption(meter_readings, '365d')
+    daily = getIntervalData(meter_readings, '1d')
+    yearly = []
+    for i in range(len(daily)-365):
+        yearly.append(daily.iloc[i:i+365].sum().values[0])
+    yearly = np.mean(yearly)
     ut_price = prices[utility]
     yearly_cost = ut_price[1] * 12 + ut_price[0] * yearly
     return yearly_cost / 12
