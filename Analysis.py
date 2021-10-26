@@ -43,3 +43,14 @@ def getMonthlyCost(utility: str, readings: pd.DataFrame, prices: Dict):
     ut_price = prices[utility]
     yearly_cost = ut_price[1] * 12 + ut_price[0] * yearly
     return yearly_cost / 12
+
+
+def prepare_holoview_df(readings: pd.DataFrame):
+    meters = getIndividualFrames(readings)
+    d_use = {}
+    for meter, df in meters.items():
+        d_use[meter] = getIntervalData(df, '1d')
+    d_use = pd.concat(d_use, axis=1).droplevel(1, axis=1)
+    d_use = d_use.stack().reset_index()
+    d_use = d_use.rename({'level_1': 'Utility', 0: 'Consumption'}, axis=1)
+    return d_use
