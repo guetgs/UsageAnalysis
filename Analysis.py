@@ -17,7 +17,8 @@ def getIndividualFrames(readings: pd.DataFrame,
     return dfs
 
 
-def getIntervalData(meter_readings: pd.DataFrame, interval: str):
+def getIntervalData(meter_readings: pd.DataFrame,
+                    interval: str) -> pd.Series:
     df = meter_readings.resample('1d').interpolate()
     resampler = df.resample(interval, label='left')
     starts = resampler.first()
@@ -25,12 +26,14 @@ def getIntervalData(meter_readings: pd.DataFrame, interval: str):
     return -starts[:-1] + ends
 
 
-def getAverageConsumption(meter_readings: pd.DataFrame, interval: str):
+def getAverageConsumption(meter_readings: pd.DataFrame, 
+                          interval: str) -> float:
     interval_data = getIntervalData(meter_readings, interval)
     return interval_data.mean().values[0]
 
 
-def getMonthlyCost(utility: str, readings: pd.DataFrame, prices: Dict):
+def getMonthlyCost(utility: str, readings: pd.DataFrame, 
+                   prices: Dict) -> float:
     gas_conversion = 0.9674 * 11.2920
     meter_readings = getIndividualFrames(readings)[utility]
     if utility == 'Gas':
@@ -45,7 +48,7 @@ def getMonthlyCost(utility: str, readings: pd.DataFrame, prices: Dict):
     return yearly_cost / 12
 
 
-def prepare_holoview_df(readings: pd.DataFrame):
+def prepare_holoview_df(readings: pd.DataFrame) -> pd.DataFrame:
     meters = getIndividualFrames(readings)
     d_use = {}
     for meter, df in meters.items():
