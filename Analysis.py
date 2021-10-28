@@ -54,19 +54,17 @@ def getMonthlyCost(utility: str,
                    readings: pd.DataFrame, 
                    prices: Dict,
                    gas_label: str = 'Gas') -> float:
-    gas_conversion = 0.9674 * 11.2920
     meter_readings = getIndividualFrames(readings)[utility]
-    # if utility == gas_label:
-    #     meter_readings = meter_readings * gas_conversion
     daily = getIntervalData(meter_readings, '1d')
     yearly = daily.rolling(365).sum()
     yearly = yearly.mean().values[0]
     ut_price = prices[utility]
-    yearly_cost = ut_price[1] * 12 + ut_price[0] * yearly
+    yearly_cost = ut_price[1] + ut_price[0] * yearly
     return yearly_cost / 12
 
 
 def prepareHoloviewDf(readings: pd.DataFrame,
+                      prices: Dict,
                       date_col: str = 'date') -> pd.DataFrame:
     meters = getIndividualFrames(readings)
     d_use = {}
@@ -79,6 +77,10 @@ def prepareHoloviewDf(readings: pd.DataFrame,
         lambda sl: getRollingSum(sl, '1 day', [7, 30]))
     d_use = d_use.set_index([date_col, 'Utility']).stack().reset_index()
     d_use = d_use.rename({'level_2': 'Interval', 0: 'Consumption'}, axis=1)
+    d_use['Cost'] = d_use.apply(lambda x: 
+            x['Consumption'] * prices[x['Utility']][0] 
+            + prices[x['Utility']][1]/365 if (x['Interval'] == '1 day')
+            else np.nan, axis=1)
     return d_use
 
 
