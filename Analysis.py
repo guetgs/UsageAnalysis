@@ -5,6 +5,20 @@ import numpy as np
 import pandas as pd
 
 
+def prepareDataFrame(readings: pd.DataFrame,
+                     gas_conv: int = 0.9674 * 11.2920,
+                     gas_label: str = 'Gas',
+                     zahler_name: str = 'zahler_name',
+                     entry = 'entry') -> pd.DataFrame:
+    readings.rename({zahler_name: 'name'}, inplace=True, axis=1)
+    readings[entry] = readings.groupby('name')[entry].apply(
+        lambda df: df - df.min()
+        )
+    temp = readings.loc[readings['name'] == gas_label, entry] * gas_conv
+    readings.loc[readings['name'] == gas_label, entry] = temp
+    return readings
+
+
 def getIndividualFrames(readings: pd.DataFrame,  
                         name_col: str = 'name',
                         date_col: str = 'date') -> Dict:
@@ -42,8 +56,8 @@ def getMonthlyCost(utility: str,
                    gas_label: str = 'Gas') -> float:
     gas_conversion = 0.9674 * 11.2920
     meter_readings = getIndividualFrames(readings)[utility]
-    if utility == gas_label:
-        meter_readings = meter_readings * gas_conversion
+    # if utility == gas_label:
+    #     meter_readings = meter_readings * gas_conversion
     daily = getIntervalData(meter_readings, '1d')
     yearly = daily.rolling(365).sum()
     yearly = yearly.mean().values[0]
