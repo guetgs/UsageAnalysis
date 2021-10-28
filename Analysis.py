@@ -1,4 +1,5 @@
 from typing import Dict
+from IPython.display import display
 
 import numpy as np
 import pandas as pd
@@ -39,10 +40,8 @@ def getMonthlyCost(utility: str, readings: pd.DataFrame,
     if utility == 'Gas':
         meter_readings = meter_readings * gas_conversion
     daily = getIntervalData(meter_readings, '1d')
-    yearly = []
-    for i in range(len(daily)-365):
-        yearly.append(daily.iloc[i:i+365].sum().values[0])
-    yearly = np.mean(yearly)
+    yearly = daily.rolling(365).sum()
+    yearly = yearly.mean().values[0]
     ut_price = prices[utility]
     yearly_cost = ut_price[1] * 12 + ut_price[0] * yearly
     return yearly_cost / 12
