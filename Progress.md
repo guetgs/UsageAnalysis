@@ -15,3 +15,7 @@
 ## Presentation of Results
 - [ ] Plot results
 - [ ] Create interactive plots
+
+## Provide Example Data
+- [ ] Generate data
+- [ ] Automatically enter example data to database
