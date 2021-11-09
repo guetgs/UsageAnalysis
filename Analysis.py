@@ -79,8 +79,7 @@ def prepareHoloviewDf(readings: pd.DataFrame,
     d_use = d_use.rename({'level_2': 'Interval', 0: 'Consumption'}, axis=1)
     d_use['Cost'] = d_use.apply(lambda x: 
             x['Consumption'] * prices[x['Utility']][0] 
-            + prices[x['Utility']][1]/365 if (x['Interval'] == '1 day')
-            else np.nan, axis=1)
+            + prices[x['Utility']][1]/365, axis=1)
     return d_use
 
 
