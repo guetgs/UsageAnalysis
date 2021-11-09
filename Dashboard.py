@@ -9,21 +9,19 @@ hv.extension('bokeh')
 def MakePanel(holo_df, 
               kdims=['date', 'Utility', 'Interval'], 
               vdims=['Consumption', 'Cost']):
-    intervals = list(holo_df[kdims[2]].unique())
-    intervals = pn.widgets.RadioButtonGroup(options=intervals, name=kdims[2])
+    
     holo_ds = hv.Dataset(holo_df, kdims, vdims)
-    # plot = holo_ds.to(hv.Curve, kdims[0], vdims[0])
-    # plot = plot.opts(opts.Curve(framewise=True, tools=['hover'],
-    #                             aspect=2/1, responsive=True))
-    # pan = plot.layout(kdims[1]).opts(tabs=True, framewise=True)
-    # pan = pn.panel(pan, widgets={kdims[2]: intervals})
+    intervals = MakeIntervalWidget(holo_df, kdims)
     pan = GetConsumptionPanel(holo_ds, kdims, vdims, intervals)
-    c_cost = GetCostPanel(holo_ds, kdims, vdims, intervals)
+    ints = MakeIntervalWidget(holo_df, kdims)
+    c_cost = GetCostPanel(holo_ds, kdims, vdims, ints)
     return pn.Column(f"# {kdims[1]} {vdims[0]} per {kdims[2]}",
-                     pan[0], 
+                     pan[0],
+                     pn.layout.Spacer(),
                      pn.Row(pn.layout.HSpacer(), pan[1][0], pn.layout.HSpacer()),
                      f"# {kdims[1]} {vdims[1]} per {kdims[2]}",
                      c_cost[0],
+                     pn.layout.Spacer(),
                      pn.Row(pn.layout.HSpacer(), c_cost[1][0], pn.layout.HSpacer()),
                      width_policy='max')
 
@@ -39,6 +37,13 @@ def GetConsumptionPanel(holo_ds, kdims, vdims, intervals):
 def GetCostPanel(holo_ds, kdims, vdims, intervals):
     c_cost = holo_ds.to(hv.Curve, kdims[0], vdims[1])
     c_cost = c_cost.opts(opts.Curve(framewise=True, tools=['hover'],
-                                    aspect=2/1, responsive=True))
+                                    aspect=2/1.3, responsive=True))
     c_cost = c_cost.overlay(kdims[1])
+    c_cost = c_cost.opts(legend_position='top')
     return pn.panel(c_cost, widgets={kdims[2]: intervals})
+
+
+def MakeIntervalWidget(holo_df, kdims):
+    intervals = list(holo_df[kdims[2]].unique())
+    intervals = pn.widgets.RadioButtonGroup(options=intervals, name=kdims[2])
+    return intervals
