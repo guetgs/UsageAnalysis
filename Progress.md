@@ -13,8 +13,9 @@
   - [x] Projected monthly costs
 
 ## Presentation of Results
-- [ ] Plot results
-- [ ] Create interactive plots
+- [x] Plot results
+- [x] Create interactive plots
+- [ ] Improve dashboard layout
 
 ## Provide Example Data
 - [ ] Generate data
