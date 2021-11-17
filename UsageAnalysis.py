@@ -1,11 +1,12 @@
 import panel as pn
 
-from DatabaseInteraction import Database 
+from DatabaseInteraction import Database
 from Analysis import *
 from Dashboard import *
 
+
 def main():
-    prices = {'Gas': [0.0718, 79.68], 
+    prices = {'Gas': [0.0718, 79.68],
               'Wasser': [1.79*1.07 + 2.14, 74.16],
               'Strom Guetg': [np.nan, np.nan],
               'Strom Mieter': [np.nan, np.nan]}

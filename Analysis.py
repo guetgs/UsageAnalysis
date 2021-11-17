@@ -9,7 +9,7 @@ def prepareDataFrame(readings: pd.DataFrame,
                      gas_conv: int = 0.9674 * 11.2920,
                      gas_label: str = 'Gas',
                      zahler_name: str = 'zahler_name',
-                     entry = 'entry') -> pd.DataFrame:
+                     entry: str = 'entry') -> pd.DataFrame:
     readings.rename({zahler_name: 'name'}, inplace=True, axis=1)
     readings[entry] = readings.groupby('name')[entry].apply(
         lambda df: df - df.min()
@@ -19,7 +19,7 @@ def prepareDataFrame(readings: pd.DataFrame,
     return readings
 
 
-def getIndividualFrames(readings: pd.DataFrame,  
+def getIndividualFrames(readings: pd.DataFrame,
                         name_col: str = 'name',
                         date_col: str = 'date') -> Dict:
     meters = readings[name_col].unique()
@@ -44,14 +44,14 @@ def getIntervalData(meter_readings: pd.DataFrame,
     return -starts[:-1] + ends
 
 
-def getAverageConsumption(meter_readings: pd.DataFrame, 
+def getAverageConsumption(meter_readings: pd.DataFrame,
                           interval: str) -> float:
     interval_data = getIntervalData(meter_readings, interval)
     return interval_data.mean().values[0]
 
 
-def getMonthlyCost(utility: str, 
-                   readings: pd.DataFrame, 
+def getMonthlyCost(utility: str,
+                   readings: pd.DataFrame,
                    prices: Dict,
                    gas_label: str = 'Gas') -> float:
     meter_readings = getIndividualFrames(readings)[utility]
@@ -77,9 +77,9 @@ def prepareHoloviewDf(readings: pd.DataFrame,
         lambda sl: getRollingSum(sl, '1 day', [7, 30]))
     d_use = d_use.set_index([date_col, 'Utility']).stack().reset_index()
     d_use = d_use.rename({'level_2': 'Interval', 0: 'Consumption'}, axis=1)
-    d_use['Cost'] = d_use.apply(lambda x: 
-            x['Consumption'] * prices[x['Utility']][0] 
-            + prices[x['Utility']][1]/365, axis=1)
+    d_use['Cost'] = d_use.apply(lambda x:
+                                x['Consumption'] * prices[x['Utility']][0]
+                                + prices[x['Utility']][1]/365, axis=1)
     return d_use
 
 

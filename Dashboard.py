@@ -6,10 +6,10 @@ from holoviews import opts
 hv.extension('bokeh')
 
 
-def MakePanel(holo_df, 
-              kdims=['date', 'Utility', 'Interval'], 
+def MakePanel(holo_df,
+              kdims=['date', 'Utility', 'Interval'],
               vdims=['Consumption', 'Cost']):
-    
+
     holo_ds = hv.Dataset(holo_df, kdims, vdims)
     intervals = MakeIntervalWidget(holo_df, kdims)
     pan = GetConsumptionPanel(holo_ds, kdims, vdims, intervals)
@@ -18,12 +18,16 @@ def MakePanel(holo_df,
     return pn.Column(f"## {kdims[1]} {vdims[0]} per {kdims[2]}",
                      pn.Row(pan[0], margin=(0, 10, 10, 10)),
                      pn.layout.Spacer(),
-                     pn.Row(pn.layout.HSpacer(), pan[1][0], pn.layout.HSpacer()),
+                     pn.Row(pn.layout.HSpacer(),
+                            pan[1][0],
+                            pn.layout.HSpacer()),
                      pn.layout.Spacer(),
                      f"## {kdims[1]} {vdims[1]} per {kdims[2]}",
                      pn.Row(c_cost[0], margin=(0, 10, 10, 10)),
                      pn.layout.Spacer(),
-                     pn.Row(pn.layout.HSpacer(), c_cost[1][0], pn.layout.HSpacer()),
+                     pn.Row(pn.layout.HSpacer(),
+                            c_cost[1][0],
+                            pn.layout.HSpacer()),
                      margin=40)
 
 
@@ -52,7 +56,7 @@ def GetCostPanel(holo_ds, kdims, vdims, intervals):
 
 def MakeIntervalWidget(holo_df, kdims):
     intervals = list(holo_df[kdims[2]].unique())
-    intervals = pn.widgets.RadioButtonGroup(options=intervals, 
+    intervals = pn.widgets.RadioButtonGroup(options=intervals,
                                             name=kdims[2],
-                                            margin=(10,10,10,10))
+                                            margin=(10, 10, 10, 10))
     return intervals

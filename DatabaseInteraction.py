@@ -4,7 +4,7 @@ import pandas as pd
 
 from dataclasses import dataclass, field
 from collections.abc import Iterable
-from typing import List
+from typing import List, Tuple
 
 
 '''
@@ -27,12 +27,12 @@ class Database:
 
         if columns is None:
             columns = ['(zahler_id int NOT NULL AUTO_INCREMENT KEY,'
-                        'zahler_nummer int,'
-                        'zahler_name text)',
+                       'zahler_nummer int,'
+                       'zahler_name text)',
                        '(reading_id int NOT NULL AUTO_INCREMENT KEY,'
-                        'zahler_id int,'
-                        'date date,'
-                        'entry double)']
+                       'zahler_id int,'
+                       'date date,'
+                       'entry double)']
 
         self.tables = zip(tables, columns)
         self.initialize_db()
@@ -40,20 +40,14 @@ class Database:
     def initialize_db(self) -> None:
         '''
         Connects to a MariaDB database on localhost using the
-        user 'python' and if it doesn't exist yet creates a database according to the input parameters. Name gives the name of the database, tables a list of table names and column_statement a list of column definitions for those tables.
+        user 'python' and if it doesn't exist yet creates a database
+        according to the input parameters. Name gives the name of the
+        database, tables a list of table names and column_statement a list of
+        column definitions for those tables.
 
         '''
-        
 
-        try:
-            conn = mariadb.connect(
-                user=self.user,
-                host=self.host)
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-
-        cur = conn.cursor()
+        cur, conn = self.Connect()
         cur.execute(f"CREATE DATABASE IF NOT EXISTS {self.name};")
         cur.execute(f"USE {self.name};")
 
@@ -66,18 +60,11 @@ class Database:
 
     def InsertReading(self, cols: List, values: List, table: str) -> None:
         '''
-        Connects to a MariaDB database on localhost using the user "python" and 
-        inserts the given values into the columns specified in cols into the table specified by parameter table.
+        Connects to a MariaDB database on localhost using the user "python"
+        and inserts the given values into the columns specified in cols
+        into the table specified by parameter table.
         '''
-        try:
-            conn = mariadb.connect(
-                user=self.user,
-                host=self.host)
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-
-        cur = conn.cursor()
+        cur, conn = self.Connect()
         cur.execute(f"USE {self.name};")
 
         try:
@@ -92,23 +79,17 @@ class Database:
 
         conn.close()
 
-    def DatabaseToDataFrame(self, cols: List, table_statement: str) -> pd.DataFrame:
+    def DatabaseToDataFrame(self,
+                            cols: List,
+                            table_statement: str) -> pd.DataFrame:
         '''
         Connects to a MariaDB database on localhost using the user "python" and
-        pulls data specified by the input columns from the database table(s) 
-        defined table_statement. 
+        pulls data specified by the input columns from the database table(s)
+        defined table_statement.
         Returns the data as a pandas DataFrame.
         '''
 
-        try:
-            conn = mariadb.connect(
-                user=self.user,
-                host=self.host)
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-
-        cur = conn.cursor()
+        cur, conn = self.Connect()
         cur.execute(f"USE {self.name};")
 
         col_st = ", ".join(cols)
@@ -119,3 +100,15 @@ class Database:
         conn.close()
 
         return df
+
+    def Connect(self) -> Tuple:
+        try:
+            conn = mariadb.connect(
+                user=self.user,
+                host=self.host)
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+
+        cur = conn.cursor()
+        return cur, conn
