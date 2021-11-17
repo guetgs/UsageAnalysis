@@ -15,7 +15,7 @@
 ## Presentation of Results
 - [x] Plot results
 - [x] Create interactive plots
-- [ ] Improve dashboard layout
+- [x] Improve dashboard layout
 
 ## Provide Example Data
 - [ ] Generate data
